@@ -10,6 +10,23 @@ packages = [{include = "jobboard_app"}]
 python = "^3.10"
 django = "4.2.2"
 
+[tool.poetry.group.dev.dependencies]
+pre-commit = "^3.3.3"
+deptry = "0.11.0"
+pylint = "2.17.4"
+
+[tool.mypy]
+mypy_path = "src/jobboard_app"
+disallow_untyped_defs = true
+check_untyped_defs = true
+strict_optional = true
+no_implicit_optional = true
+warn_return_any = true
+show_error_codes = true
+warn_unused_ignores = true
+
+[tool.black]
+skip-string-normalization = true
 
 [build-system]
 requires = ["poetry-core"]
