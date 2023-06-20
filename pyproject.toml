@@ -9,6 +9,7 @@ packages = [{include = "jobboard_app"}]
 [tool.poetry.dependencies]
 python = "^3.10"
 django = "4.2.2"
+python-dotenv = "1.0.0"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.3.3"
@@ -26,7 +27,11 @@ show_error_codes = true
 warn_unused_ignores = true
 
 [tool.black]
-skip-string-normalization = true
+skip-string-normalization = false
+line-length = 120
+
+[tool.isort]
+profile = "black"
 
 [build-system]
 requires = ["poetry-core"]

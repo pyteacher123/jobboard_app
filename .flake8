@@ -4,4 +4,3 @@ exclude =
     __pycache__,
     venv
 max-line-length = 120
-extend-ignore = E203
