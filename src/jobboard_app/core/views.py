@@ -19,7 +19,6 @@ vacancy_storage = VacancyStorage(company_storage=company_storage)
 
 @require_http_methods(request_method_list=["GET"])
 def index_controller(request: HttpRequest) -> HttpResponse:
-    print("Controller executed.")
     vacancies = vacancy_storage.get_all_vacancies()
     context = {"vacancies": vacancies}
     return render(request=request, template_name="index.html", context=context)
@@ -35,7 +34,6 @@ def add_company_controller(request: HttpRequest) -> HttpResponse:
     elif request.method == "POST":
         form = AddCompanyForm(data=request.POST)
         if form.is_valid():
-            print(form.cleaned_data)
             name = form.cleaned_data["name"]
             employees_number = form.cleaned_data["employees_number"]
             company = Company(name=name, employees_number=employees_number)
@@ -46,7 +44,6 @@ def add_company_controller(request: HttpRequest) -> HttpResponse:
 @require_http_methods(request_method_list=["GET"])
 def company_list_controller(request: HttpRequest) -> HttpResponse:
     companies = company_storage.get_all_companies()
-    print(companies)
     context = {"companies": companies}
     return render(request=request, template_name="company_list.html", context=context)
 
