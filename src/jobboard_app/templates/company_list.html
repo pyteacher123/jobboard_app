@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+    <h1>Companies List</h1>
+    <table>
+        <tr>
+            <th>Company</th>
+            <th>Employees</th>
+            <th>Open Positions</th>
+        </tr>
+        {% for company in companies %}
+            <tr>
+                <td><a href="{% url 'company' company.id %}">{{ company.name }}</a></td>
+                <td>{{ company.employees_number }}</td>
+                <td>{{ company.vacancies_counter }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

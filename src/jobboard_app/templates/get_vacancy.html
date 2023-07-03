@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ vacancy.name }}</h1>
+<p>Company: {{ vacancy.company }}</p>
+<p>Level: {{ vacancy.level }}</p>
+<p>Expirience: {{ vacancy.expirience }}</p>
+{% if vacancy.min_salary and vacancy.max_salary %}
+    <p>Salary: {{ vacancy.min_salary }} - {{ vacancy.max_salary }} USD</p>
+{% elif vacancy.min_salary and not vacancy.max_salary %}
+    <p>Salary: From {{ vacancy.min_salary }} USD</p>
+{% elif not vacancy.min_salary and vacancy.max_salary %}
+    <p>Salary: Up to {{vacancy.max_salary}} USD</p>
+{% elif not vacancy.min_salary and not vacancy.max_salary %}
+    <p>Salary: Undisclosed salary</p>
+{% endif %}
+{% endblock %}
