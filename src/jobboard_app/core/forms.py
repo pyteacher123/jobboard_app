@@ -1,13 +1,8 @@
+from core.models import Level
+from core.validators import ValidateMaxTagCount, validate_swear_words_in_company_name
 from django import forms
 
-from .validators import validate_swear_words_in_company_name
-
-LEVELS = (
-    ("Intern", "Intern"),
-    ("Junior", "Junior"),
-    ("Middle", "Middle"),
-    ("Senior", "Senior"),
-)
+LEVELS = [(level.name, level.name) for level in Level.objects.all()]
 
 
 class AddCompanyForm(forms.Form):
@@ -24,3 +19,14 @@ class AddVacancyForm(forms.Form):
     expirience = forms.CharField(label="Expirience", max_length=30, strip=True)
     min_salary = forms.IntegerField(label="Min Salary", min_value=0, required=False)
     max_salary = forms.IntegerField(label="Max Salary", min_value=0, required=False)
+    tags = forms.CharField(label="Tags", widget=forms.Textarea, validators=[ValidateMaxTagCount(max_count=5)])
+
+
+class SearchVacancyForm(forms.Form):
+    name = forms.CharField(label="Position", max_length=30, strip=True, required=False)
+    company_name = forms.CharField(label="Company", max_length=30, strip=True, required=False)
+    level = forms.ChoiceField(label="Level", choices=[("", "ALL")] + LEVELS, required=False)
+    expirience = forms.CharField(label="Expirience", max_length=30, strip=True, required=False)
+    min_salary = forms.IntegerField(label="Min Salary", min_value=0, required=False)
+    max_salary = forms.IntegerField(label="Max Salary", min_value=0, required=False)
+    tag = forms.CharField(label="Tag", required=False)

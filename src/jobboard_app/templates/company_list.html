@@ -11,7 +11,7 @@
             <tr>
                 <td><a href="{% url 'company' company.id %}">{{ company.name }}</a></td>
                 <td>{{ company.employees_number }}</td>
-                <td>{{ company.vacancies_counter }}</td>
+                <td>{{ company.vacancy__count }}</td>
             </tr>
         {% endfor %}
     </table>
