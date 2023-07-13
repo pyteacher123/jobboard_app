@@ -84,6 +84,19 @@ files = [
 ]
 
 [[package]]
+name = "dacite"
+version = "1.8.1"
+description = "Simple creation of data classes from dictionaries."
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "dacite-1.8.1-py3-none-any.whl", hash = "sha256:cc31ad6fdea1f49962ea42db9421772afe01ac5442380d9a99fcf3d188c61afe"},
+]
+
+[package.extras]
+dev = ["black", "coveralls", "mypy", "pre-commit", "pylint", "pytest (>=5)", "pytest-benchmark", "pytest-cov"]
+
+[[package]]
 name = "deptry"
 version = "0.11.0"
 description = "A command line utility to check for unused, missing and transitive dependencies in a Python project."
@@ -651,4 +664,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "a99a83bb790e9c061fbf1eb5714f3e1ebbe142bd1ab4a8c96aa490de85d2c69b"
+content-hash = "2e62bdce6370de403db1cbcdd2d04ed69bc6eeba30ea5107da803115db8102c0"

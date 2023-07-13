@@ -23,6 +23,8 @@ class AddVacancyForm(forms.Form):
 
 
 class SearchVacancyForm(forms.Form):
+    template_name = "search_form_snippet.html"
+
     name = forms.CharField(label="Position", max_length=30, strip=True, required=False)
     company_name = forms.CharField(label="Company", max_length=30, strip=True, required=False)
     level = forms.ChoiceField(label="Level", choices=[("", "ALL")] + LEVELS, required=False)

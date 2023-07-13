@@ -1,95 +1,90 @@
-"""
-Module with business logic and data storages implementations.
-"""
-from dataclasses import dataclass
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+from django.db import transaction
+from django.db.models import Count
+
+if TYPE_CHECKING:
+    from core.dto import SearchVacancyDTO, AddVacancyDTO, AddCompanyDTO
+
+from core.exceptions import CompanyNotExists
+from core.models import Company, Level, Tag, Vacancy
 
 
-@dataclass
-class Vacancy:
-    name: str
-    company: str
-    level: str
-    expirience: str
-    min_salary: int | None
-    max_salary: int | None
-    id: int | None = None
+def search_vacancies(search_filters: SearchVacancyDTO) -> list[Vacancy]:
+    vacancies = Vacancy.objects.select_related("level", "company").prefetch_related("tags")
+
+    if search_filters.name:
+        vacancies = vacancies.filter(name__icontains=search_filters.name)
+
+    if search_filters.company_name:
+        vacancies = vacancies.filter(company__name__icontains=search_filters.company_name)
+
+    if search_filters.level:
+        vacancies = vacancies.filter(level__name=search_filters.level)
+
+    if search_filters.expirience:
+        vacancies = vacancies.filter(expirience__icontains=search_filters.expirience)
+
+    if search_filters.min_salary:
+        vacancies = vacancies.filter(min_salary__gte=search_filters.min_salary)
+
+    if search_filters.max_salary:
+        vacancies = vacancies.filter(max_salary__lte=search_filters.max_salary)
+
+    if search_filters.tag:
+        vacancies = vacancies.filter(tags__name=search_filters.tag)
+
+    return list(vacancies)
 
 
-@dataclass
-class Company:
-    name: str
-    employees_number: int
-    vacancies_counter: int = 0
-    id: int | None = None
+def create_company(data: AddCompanyDTO) -> None:
+    Company.objects.create(name=data.name, employees_number=data.employees_number)
 
 
-class CompanyDuplicateNameError(Exception):
-    ...
+def get_companies() -> list[Company]:
+    companies = Company.objects.annotate(vacancy__count=Count("vacancy__id")).order_by("-vacancy__count")
+    return list(companies)
 
 
-class CompanyNotExistsError(Exception):
-    ...
+def create_vacancy(data: AddVacancyDTO) -> None:
+    with transaction.atomic():
+        tags: list[str] = data.tags.split("\r\n")
+        tags_list: list[Tag] = []
+        for tag in tags:
+            tag = tag.lower()
+            try:
+                tag_from_db = Tag.objects.get(name=tag)
+            except Tag.DoesNotExist:
+                tag_from_db = Tag.objects.create(name=tag)
+
+            tags_list.append(tag_from_db)
+
+        level = Level.objects.get(name=data.level)
+        try:
+            company = Company.objects.get(name=data.company_name)
+        except Company.DoesNotExist:
+            raise CompanyNotExists
+
+        created_vacancy = Vacancy.objects.create(
+            name=data.name,
+            level=level,
+            company=company,
+            expirience=data.expirience,
+            min_salary=data.min_salary,
+            max_salary=data.max_salary,
+        )
+
+        created_vacancy.tags.set(tags_list)
 
 
-class BaseStorage:
-    ID_COUNT = 0
-
-    def update_counter(self) -> int:
-        self.ID_COUNT += 1
-        return self.ID_COUNT
+def get_vacancy_by_id(vacancy_id: int) -> tuple[Vacancy, list[Tag]]:
+    vacancy = Vacancy.objects.select_related("level", "company").prefetch_related("tags").get(pk=vacancy_id)
+    tags = vacancy.tags.all()
+    return vacancy, list(tags)
 
 
-class CompanyStorage(BaseStorage):
-    def __init__(self) -> None:
-        self._companies: list[Company] = []
-
-    def _validate_company(self, company_to_add: Company) -> None:
-        for company in self._companies:
-            if company.name.lower() == company_to_add.name.lower():
-                raise CompanyDuplicateNameError
-
-    def add_company(self, company_to_add: Company) -> None:
-        self._validate_company(company_to_add=company_to_add)
-        primary_key = self.update_counter()
-        company_to_add.id = primary_key
-        self._companies.append(company_to_add)
-
-    def get_all_companies(self) -> list[Company]:
-        return self._companies
-
-    def get_company_by_name(self, company_name: str) -> Company | None:
-        for company in self._companies:
-            if company.name.lower() == company_name.lower():
-                return company
-        return None
-
-    def get_company_by_id(self, company_id: int) -> Company | None:
-        for company in self._companies:
-            if company.id == company_id:
-                return company
-        return None
-
-
-class VacancyStorage(BaseStorage):
-    def __init__(self, company_storage: CompanyStorage) -> None:
-        self._vacancies: list[Vacancy] = []
-        self._company_storage = company_storage
-
-    def add_vacancy(self, vacancy_to_add: Vacancy) -> None:
-        company = self._company_storage.get_company_by_name(company_name=vacancy_to_add.company)
-        if not company:
-            raise CompanyNotExistsError
-
-        primary_key = self.update_counter()
-        vacancy_to_add.id = primary_key
-        self._vacancies.append(vacancy_to_add)
-        company.vacancies_counter += 1
-
-    def get_all_vacancies(self) -> list[Vacancy]:
-        return self._vacancies
-
-    def get_vacancy_by_id(self, vacancy_id: int) -> Vacancy | None:
-        for vacancy in self._vacancies:
-            if vacancy.id == vacancy_id:
-                return vacancy
-        return None
+def get_company_by_id(company_id: int) -> Company:
+    company: Company = Company.objects.annotate(vacancy__count=Count("vacancy__id")).get(pk=company_id)
+    return company
