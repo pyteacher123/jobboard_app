@@ -1,15 +1,8 @@
 from core.models import Level
-from core.validators import ValidateMaxTagCount, validate_swear_words_in_company_name
+from core.presentation.validators import ValidateFileExtension, ValidateFileSize, ValidateMaxTagCount
 from django import forms
 
 LEVELS = [(level.name, level.name) for level in Level.objects.all()]
-
-
-class AddCompanyForm(forms.Form):
-    name = forms.CharField(
-        label="Company", max_length=30, strip=True, validators=[validate_swear_words_in_company_name]
-    )
-    employees_number = forms.IntegerField(label="Employees", min_value=1)
 
 
 class AddVacancyForm(forms.Form):
@@ -19,6 +12,11 @@ class AddVacancyForm(forms.Form):
     expirience = forms.CharField(label="Expirience", max_length=30, strip=True)
     min_salary = forms.IntegerField(label="Min Salary", min_value=0, required=False)
     max_salary = forms.IntegerField(label="Max Salary", min_value=0, required=False)
+    attachment = forms.FileField(
+        label="Attachment",
+        allow_empty_file=False,
+        validators=[ValidateFileExtension(["pdf"]), ValidateFileSize(max_size=5_000_000)],
+    )
     tags = forms.CharField(label="Tags", widget=forms.Textarea, validators=[ValidateMaxTagCount(max_count=5)])
 
 

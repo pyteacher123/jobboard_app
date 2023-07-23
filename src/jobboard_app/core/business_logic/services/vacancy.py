@@ -3,12 +3,12 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from django.db import transaction
-from django.db.models import Count
 
 if TYPE_CHECKING:
-    from core.dto import SearchVacancyDTO, AddVacancyDTO, AddCompanyDTO
+    from core.business_logic.dto import SearchVacancyDTO, AddVacancyDTO
 
-from core.exceptions import CompanyNotExists
+from core.business_logic.exceptions import CompanyNotExists
+from core.business_logic.services.common import replace_file_name_to_uuid
 from core.models import Company, Level, Tag, Vacancy
 
 
@@ -36,16 +36,9 @@ def search_vacancies(search_filters: SearchVacancyDTO) -> list[Vacancy]:
     if search_filters.tag:
         vacancies = vacancies.filter(tags__name=search_filters.tag)
 
+    vacancies = vacancies.order_by("-id")
+
     return list(vacancies)
-
-
-def create_company(data: AddCompanyDTO) -> None:
-    Company.objects.create(name=data.name, employees_number=data.employees_number)
-
-
-def get_companies() -> list[Company]:
-    companies = Company.objects.annotate(vacancy__count=Count("vacancy__id")).order_by("-vacancy__count")
-    return list(companies)
 
 
 def create_vacancy(data: AddVacancyDTO) -> None:
@@ -67,6 +60,8 @@ def create_vacancy(data: AddVacancyDTO) -> None:
         except Company.DoesNotExist:
             raise CompanyNotExists
 
+        data.attachment = replace_file_name_to_uuid(file=data.attachment)
+
         created_vacancy = Vacancy.objects.create(
             name=data.name,
             level=level,
@@ -74,6 +69,7 @@ def create_vacancy(data: AddVacancyDTO) -> None:
             expirience=data.expirience,
             min_salary=data.min_salary,
             max_salary=data.max_salary,
+            attachment=data.attachment,
         )
 
         created_vacancy.tags.set(tags_list)
@@ -83,8 +79,3 @@ def get_vacancy_by_id(vacancy_id: int) -> tuple[Vacancy, list[Tag]]:
     vacancy = Vacancy.objects.select_related("level", "company").prefetch_related("tags").get(pk=vacancy_id)
     tags = vacancy.tags.all()
     return vacancy, list(tags)
-
-
-def get_company_by_id(company_id: int) -> Company:
-    company: Company = Company.objects.annotate(vacancy__count=Count("vacancy__id")).get(pk=company_id)
-    return company

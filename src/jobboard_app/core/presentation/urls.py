@@ -1,6 +1,4 @@
-from django.urls import path
-
-from .views import (
+from core.presentation.views import (
     add_company_controller,
     add_vacancy_controller,
     company_list_controller,
@@ -8,6 +6,7 @@ from .views import (
     get_vacancy_controller,
     index_controller,
 )
+from django.urls import path
 
 urlpatterns = [
     path("", index_controller, name="index"),

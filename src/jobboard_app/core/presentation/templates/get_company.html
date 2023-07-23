@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
+<img src="{{ company.logo.url }}">
 <h1>{{ company.name }}</h1>
 <p>Employees: {{ company.employees_number }}</p>
 <p>Open Positions: {{ company.vacancy__count }}</p>

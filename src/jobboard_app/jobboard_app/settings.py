@@ -56,8 +56,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "core.middleware.BlockURLMiddleware",
-    "core.middleware.TransferRandomMessageMiddleware",
+    "core.presentation.middleware.BlockURLMiddleware",
+    "core.presentation.middleware.TransferRandomMessageMiddleware",
 ]
 
 ROOT_URLCONF = "jobboard_app.urls"
@@ -65,7 +65,7 @@ ROOT_URLCONF = "jobboard_app.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [os.path.join(BASE_DIR, "templates")],
+        "DIRS": [os.path.join(BASE_DIR, "core", "presentation", "templates")],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -139,3 +139,7 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+MEDIA_ROOT = os.path.join(BASE_DIR.parents[3], "media", "jobboard")
+
+MEDIA_URL = "/media/"
