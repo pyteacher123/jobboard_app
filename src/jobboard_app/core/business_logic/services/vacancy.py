@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from typing import TYPE_CHECKING
 
 from django.db import transaction
@@ -10,6 +11,8 @@ if TYPE_CHECKING:
 from core.business_logic.exceptions import CompanyNotExists
 from core.business_logic.services.common import replace_file_name_to_uuid
 from core.models import Company, Level, Tag, Vacancy
+
+logger = logging.getLogger(__name__)
 
 
 def search_vacancies(search_filters: SearchVacancyDTO) -> list[Vacancy]:
@@ -49,15 +52,18 @@ def create_vacancy(data: AddVacancyDTO) -> None:
             tag = tag.lower()
             try:
                 tag_from_db = Tag.objects.get(name=tag)
-            except Tag.DoesNotExist:
+            except Tag.DoesNotExist as err:
+                logger.warning("Tag doesn't exists", extra={"tag": tag}, exc_info=err)
                 tag_from_db = Tag.objects.create(name=tag)
+                logger.info("Handled error and successfully created tag in db.", extra={"tag": tag})
 
             tags_list.append(tag_from_db)
 
         level = Level.objects.get(name=data.level)
         try:
             company = Company.objects.get(name=data.company_name)
-        except Company.DoesNotExist:
+        except Company.DoesNotExist as err:
+            logger.error("Company doesn't exists.", extra={"company": data.company_name}, exc_info=err)
             raise CompanyNotExists
 
         data.attachment = replace_file_name_to_uuid(file=data.attachment)
@@ -78,4 +84,5 @@ def create_vacancy(data: AddVacancyDTO) -> None:
 def get_vacancy_by_id(vacancy_id: int) -> tuple[Vacancy, list[Tag]]:
     vacancy = Vacancy.objects.select_related("level", "company").prefetch_related("tags").get(pk=vacancy_id)
     tags = vacancy.tags.all()
+    logger.info("Got vacancy.", extra={"vacancy_id": vacancy.id})
     return vacancy, list(tags)
