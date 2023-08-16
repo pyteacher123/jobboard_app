@@ -24,3 +24,9 @@ class AddVacancyDTO:
     max_salary: int | None
     attachment: File
     tags: str
+
+
+@dataclass
+class ApplyVacancyDTO:
+    note: str
+    cv: File

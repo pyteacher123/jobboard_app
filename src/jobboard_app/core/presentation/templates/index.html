@@ -14,7 +14,7 @@
             <th>Expirience</th>
             <th>Salary</th>
         </tr>
-        {% for vacancy in vacancies %}
+        {% for vacancy in vacancies.data %}
             <tr>
                 <td><a href="{% url 'vacancy' vacancy.id %}">{{ vacancy.name }}</a></td>
                 <td>{{ vacancy.company.name }}</td>
@@ -42,4 +42,10 @@
             </tr>
         {% endfor %}
     </table>
+    {% if vacancies.prev_page is not None %}
+        <a href="{% url 'index' %}?page={{ vacancies.prev_page }}">Prev</a>
+    {% endif %}
+    {% if vacancies.next_page is not None %}
+        <a href="{% url 'index' %}?page={{ vacancies.next_page }}">Next</a>
+    {% endif %}
 {% endblock %}

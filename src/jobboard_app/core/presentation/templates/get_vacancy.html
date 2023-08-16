@@ -24,4 +24,8 @@
     #{{tag.name}} 
 {% endfor %}
 </p>
+<br>
+{% if perms.core.apply_to_vacancy %}
+   <a href="{% url 'apply-vacancy' vacancy.id %}">Apply</a>
+{% endif %}
 {% endblock %}

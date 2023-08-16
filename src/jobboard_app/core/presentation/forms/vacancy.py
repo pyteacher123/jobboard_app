@@ -30,3 +30,12 @@ class SearchVacancyForm(forms.Form):
     min_salary = forms.IntegerField(label="Min Salary", min_value=0, required=False)
     max_salary = forms.IntegerField(label="Max Salary", min_value=0, required=False)
     tag = forms.CharField(label="Tag", required=False)
+
+
+class ApplyVacancyForm(forms.Form):
+    note = forms.CharField(label="Note", max_length=1000, widget=forms.Textarea)
+    cv = forms.FileField(
+        label="CV",
+        allow_empty_file=False,
+        validators=[ValidateFileExtension(["pdf"]), ValidateFileSize(max_size=5_000_000)],
+    )

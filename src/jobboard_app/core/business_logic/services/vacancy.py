@@ -4,18 +4,21 @@ import logging
 from typing import TYPE_CHECKING
 
 from django.db import transaction
+from django.db.models import QuerySet
 
 if TYPE_CHECKING:
-    from core.business_logic.dto import SearchVacancyDTO, AddVacancyDTO
+    from django.contrib.auth.models import AbstractBaseUser
+
+    from core.business_logic.dto import SearchVacancyDTO, AddVacancyDTO, ApplyVacancyDTO
 
 from core.business_logic.exceptions import CompanyNotExists
 from core.business_logic.services.common import replace_file_name_to_uuid
-from core.models import Company, Level, Tag, Vacancy
+from core.models import Company, JobResponse, Level, Tag, Vacancy
 
 logger = logging.getLogger(__name__)
 
 
-def search_vacancies(search_filters: SearchVacancyDTO) -> list[Vacancy]:
+def search_vacancies(search_filters: SearchVacancyDTO) -> QuerySet[Vacancy]:
     vacancies = Vacancy.objects.select_related("level", "company").prefetch_related("tags")
 
     if search_filters.name:
@@ -41,7 +44,7 @@ def search_vacancies(search_filters: SearchVacancyDTO) -> list[Vacancy]:
 
     vacancies = vacancies.order_by("-id")
 
-    return list(vacancies)
+    return vacancies
 
 
 def create_vacancy(data: AddVacancyDTO) -> None:
@@ -86,3 +89,8 @@ def get_vacancy_by_id(vacancy_id: int) -> tuple[Vacancy, list[Tag]]:
     tags = vacancy.tags.all()
     logger.info("Got vacancy.", extra={"vacancy_id": vacancy.id})
     return vacancy, list(tags)
+
+
+def apply_to_vacancy(data: ApplyVacancyDTO, vacancy_id: int, user: AbstractBaseUser) -> None:
+    vacancy = Vacancy.objects.get(pk=vacancy_id)
+    JobResponse.objects.create(note=data.note, cv=data.cv, vacancy=vacancy, user=user)

@@ -15,3 +15,6 @@ class Vacancy(models.Model):
 
     class Meta:
         db_table = "vacancies"
+        permissions = [
+            ("apply_to_vacancy", "Allows apply to any vacancy"),
+        ]

@@ -2,7 +2,13 @@ from .company import add_company_controller, company_list_controller, get_compan
 from .login import login_controller
 from .logout import logout_controller
 from .registration import confirm_email_stub_controller, registration_confirmation_controller, registration_controller
-from .vacancy import add_vacancy_controller, get_vacancy_controller, index_controller
+from .vacancy import (
+    add_vacancy_controller,
+    apply_vacancy_controller,
+    get_vacancy_controller,
+    index_controller,
+    successfull_apply_controller,
+)
 
 __all__ = [
     "index_controller",
@@ -16,4 +22,6 @@ __all__ = [
     "confirm_email_stub_controller",
     "login_controller",
     "logout_controller",
+    "apply_vacancy_controller",
+    "successfull_apply_controller",
 ]
