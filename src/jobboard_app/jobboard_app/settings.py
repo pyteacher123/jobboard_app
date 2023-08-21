@@ -141,7 +141,7 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-MEDIA_ROOT = os.path.join(BASE_DIR.parents[3], "media", "jobboard")
+MEDIA_ROOT = os.path.join(BASE_DIR.parents[2], "media", "jobboard")
 
 MEDIA_URL = "/media/"
 

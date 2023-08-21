@@ -2,13 +2,16 @@ from core.models import Level
 from core.presentation.validators import ValidateFileExtension, ValidateFileSize, ValidateMaxTagCount
 from django import forms
 
-LEVELS = [(level.name, level.name) for level in Level.objects.all()]
+
+def get_levels() -> list:
+    levels = [(level.name, level.name) for level in Level.objects.all()]
+    return levels
 
 
 class AddVacancyForm(forms.Form):
     name = forms.CharField(label="Name", max_length=30, strip=True)
     company_name = forms.CharField(label="Company", max_length=30, strip=True)
-    level = forms.ChoiceField(label="Level", choices=LEVELS)
+    level = forms.ChoiceField(label="Level", choices=get_levels())
     expirience = forms.CharField(label="Expirience", max_length=30, strip=True)
     min_salary = forms.IntegerField(label="Min Salary", min_value=0, required=False)
     max_salary = forms.IntegerField(label="Max Salary", min_value=0, required=False)
@@ -25,7 +28,7 @@ class SearchVacancyForm(forms.Form):
 
     name = forms.CharField(label="Position", max_length=30, strip=True, required=False)
     company_name = forms.CharField(label="Company", max_length=30, strip=True, required=False)
-    level = forms.ChoiceField(label="Level", choices=[("", "ALL")] + LEVELS, required=False)
+    level = forms.ChoiceField(label="Level", choices=[("", "ALL")] + get_levels(), required=False)
     expirience = forms.CharField(label="Expirience", max_length=30, strip=True, required=False)
     min_salary = forms.IntegerField(label="Min Salary", min_value=0, required=False)
     max_salary = forms.IntegerField(label="Max Salary", min_value=0, required=False)
