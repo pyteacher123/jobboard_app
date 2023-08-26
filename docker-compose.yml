@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:latest
+    environment:
+      - POSTGRES_PASSWORD=123456
+      - POSTGRES_USER=dev_user
+      - POSTGRES_DB=jobs_db
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    ports:
+      - '5435:5432'
+  
+  app:
+    build: .
+    ports:
+      - '8000:8000'
+    command: >
+      sh -c 'python3 ./src/jobboard_app/manage.py migrate &&
+      python3 ./src/jobboard_app/manage.py populate_permissions &&
+      python3 ./src/jobboard_app/manage.py runserver 0.0.0.0:8000'
+    depends_on:
+      - db
+
+volumes:
+  pg_data:
+    driver: local

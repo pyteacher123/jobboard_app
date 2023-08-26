@@ -1,16 +1,14 @@
 from typing import Any
 
-from django.contrib.auth.models import Group, Permission
+from django.contrib.auth.models import Group
 from django.db import migrations
 
-DEFAULT_ROLES = {"candidate": [], "recruiter": ["add_vacancy", "add_company"]}
+DEFAULT_ROLES = ["candidate", "recruiter"]
 
 
 def populate_db_with_default_roles(apps: Any, schema_editor: Any) -> None:
-    for role_name, permissions_list in DEFAULT_ROLES.items():
-        group = Group.objects.create(name=role_name)
-        permissions = Permission.objects.filter(codename__in=permissions_list)
-        group.permissions.set(permissions)
+    for role_name in DEFAULT_ROLES:
+        Group.objects.create(name=role_name)
 
 
 def drop_default_roles_from_db(apps: Any, schema_editor: Any) -> None:

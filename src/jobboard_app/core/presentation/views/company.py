@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django.views.decorators.cache import cache_page
 from django.views.decorators.http import require_http_methods
 
 if TYPE_CHECKING:
@@ -34,6 +35,7 @@ def add_company_controller(request: HttpRequest) -> HttpResponse:
         return HttpResponseRedirect(redirect_to=reverse("company-list"))
 
 
+@cache_page(60)
 @login_required
 @require_http_methods(request_method_list=["GET"])
 def company_list_controller(request: HttpRequest) -> HttpResponse:
