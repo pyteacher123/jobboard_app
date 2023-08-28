@@ -14,8 +14,8 @@ if TYPE_CHECKING:
 
 from core.business_logic.dto import AddCompanyDTO
 from core.business_logic.services import create_company, get_companies, get_company_by_id
-from core.presentation.converters import convert_data_from_form_to_dto
-from core.presentation.forms import AddCompanyForm
+from core.presentation.common.converters import convert_data_from_form_to_dto
+from core.presentation.web.forms import AddCompanyForm
 
 
 @permission_required(["core.add_company"])

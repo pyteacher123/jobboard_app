@@ -1,4 +1,4 @@
-from core.presentation.views import (
+from core.presentation.web.views import (
     add_company_controller,
     add_vacancy_controller,
     apply_vacancy_controller,

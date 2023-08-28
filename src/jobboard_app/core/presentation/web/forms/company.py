@@ -1,4 +1,8 @@
-from core.presentation.validators import ValidateFileExtension, ValidateFileSize, validate_swear_words_in_company_name
+from core.presentation.web.validators import (
+    ValidateFileExtension,
+    ValidateFileSize,
+    validate_swear_words_in_company_name,
+)
 from django import forms
 
 

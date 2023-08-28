@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.forms",
+    "rest_framework",
     # internal
     "core",
 ]
@@ -57,8 +58,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "core.presentation.middleware.BlockURLMiddleware",
-    "core.presentation.middleware.TransferRandomMessageMiddleware",
+    "core.presentation.web.middleware.BlockURLMiddleware",
+    "core.presentation.web.middleware.TransferRandomMessageMiddleware",
 ]
 
 ROOT_URLCONF = "jobboard_app.urls"
@@ -66,7 +67,7 @@ ROOT_URLCONF = "jobboard_app.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [os.path.join(BASE_DIR, "core", "presentation", "templates")],
+        "DIRS": [os.path.join(BASE_DIR, "core", "presentation", "web", "templates")],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [

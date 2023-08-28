@@ -1,5 +1,5 @@
 from core.models import Level
-from core.presentation.validators import ValidateFileExtension, ValidateFileSize, ValidateMaxTagCount
+from core.presentation.web.validators import ValidateFileExtension, ValidateFileSize, ValidateMaxTagCount
 from django import forms
 
 

@@ -15,9 +15,9 @@ if TYPE_CHECKING:
 from core.business_logic.dto import AddVacancyDTO, ApplyVacancyDTO, SearchVacancyDTO
 from core.business_logic.exceptions import CompanyNotExists
 from core.business_logic.services import apply_to_vacancy, create_vacancy, get_vacancy_by_id, search_vacancies
-from core.presentation.converters import convert_data_from_form_to_dto
-from core.presentation.forms import AddVacancyForm, ApplyVacancyForm, SearchVacancyForm
-from core.presentation.pagination import CustomPagination, PageNotExists
+from core.presentation.common.converters import convert_data_from_form_to_dto
+from core.presentation.web.forms import AddVacancyForm, ApplyVacancyForm, SearchVacancyForm
+from core.presentation.web.pagination import CustomPagination, PageNotExists
 
 
 @require_http_methods(request_method_list=["GET"])

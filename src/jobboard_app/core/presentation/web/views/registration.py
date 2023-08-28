@@ -12,8 +12,8 @@ if TYPE_CHECKING:
 from core.business_logic.dto import RegistrationDTO
 from core.business_logic.exceptions import ConfirmationCodeExpired, ConfirmationCodeNotExists
 from core.business_logic.services import confirm_user_registration, create_user
-from core.presentation.converters import convert_data_from_form_to_dto
-from core.presentation.forms import RegistrationForm
+from core.presentation.common.converters import convert_data_from_form_to_dto
+from core.presentation.web.forms import RegistrationForm
 
 
 @require_http_methods(["GET", "POST"])
