@@ -22,9 +22,19 @@ class LevelInfoSerializer(serializers.Serializer):
 
 
 class VacancyInfoSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
     name = serializers.CharField()
     company = CompanyInfoSerializer()
     level = LevelInfoSerializer()
     expirience = serializers.CharField()
     min_salary = serializers.IntegerField()
     max_salary = serializers.IntegerField()
+
+
+class TagSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    name = serializers.CharField()
+
+
+class VacancySerializer(VacancyInfoSerializer):
+    tags = TagSerializer(many=True, read_only=True)

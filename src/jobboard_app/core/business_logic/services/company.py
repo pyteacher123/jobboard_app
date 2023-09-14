@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from django.db.models import Count
 
@@ -14,11 +14,12 @@ from core.models import Company
 logger = logging.getLogger(__name__)
 
 
-def create_company(data: AddCompanyDTO) -> None:
+def create_company(data: AddCompanyDTO) -> Any:
     data.logo = replace_file_name_to_uuid(file=data.logo)
     data.logo = change_file_size(file=data.logo)
-    Company.objects.create(name=data.name, employees_number=data.employees_number, logo=data.logo)
+    company = Company.objects.create(name=data.name, employees_number=data.employees_number, logo=data.logo)
     logger.info(f"Created file with filename {data.logo.name}")
+    return company.id
 
 
 def get_companies() -> list[Company]:

@@ -1,4 +1,11 @@
-from .company import CompanyInfoSerializer
-from .vacancy import SearchVacanciesSerializer, VacancyInfoSerializer
+from .company import CompanyInfoSerializer, CompanySerializer, CreateCompanySerializer
+from .vacancy import SearchVacanciesSerializer, VacancyInfoSerializer, VacancySerializer
 
-__all__ = ["SearchVacanciesSerializer", "VacancyInfoSerializer", "CompanyInfoSerializer"]
+__all__ = [
+    "SearchVacanciesSerializer",
+    "VacancyInfoSerializer",
+    "CompanyInfoSerializer",
+    "VacancySerializer",
+    "CompanySerializer",
+    "CreateCompanySerializer",
+]
