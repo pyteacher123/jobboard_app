@@ -1,4 +1,4 @@
-from .company import CompanyInfoSerializer, CompanySerializer, CreateCompanySerializer
+from .company import CompanyInfoSerializer, CompanySerializer, CreateCompanyResponseSerializer, CreateCompanySerializer
 from .vacancy import SearchVacanciesSerializer, VacancyInfoSerializer, VacancySerializer
 
 __all__ = [
@@ -8,4 +8,5 @@ __all__ = [
     "VacancySerializer",
     "CompanySerializer",
     "CreateCompanySerializer",
+    "CreateCompanyResponseSerializer",
 ]

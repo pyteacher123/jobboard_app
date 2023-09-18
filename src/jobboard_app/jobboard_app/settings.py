@@ -48,6 +48,8 @@ INSTALLED_APPS = [
     "rest_framework",
     # internal
     "core",
+    # 3-rd party
+    "drf_yasg",
 ]
 
 MIDDLEWARE = [
@@ -186,3 +188,20 @@ SERVER_HOST = os.environ["SERVER_HOST"]
 
 
 CACHES = {"default": {"BACKEND": "django.core.cache.backends.redis.RedisCache", "LOCATION": os.environ["REDIS_URL"]}}
+
+
+REST_FRAMEWORK = {
+    "DEFAULT_THROTTLE_RATES": {
+        "anon": "1/minute",
+        "user": "5/minute",
+    },
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.SessionAuthentication",
+    ],
+}
+
+
+SWAGGER_SETTINGS = {
+    "LOGOUT_URL": "/logout/",
+    "LOGIN_URL": "/singnin/",
+}

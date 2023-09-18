@@ -1,5 +1,6 @@
 from core.models import Level
-from core.presentation.web.validators import ValidateFileExtension, ValidateFileSize, ValidateMaxTagCount
+from core.presentation.common.validators import FileExtensionValidator, FileSizeValidator, MaxTagCountValidator
+from core.presentation.web.validators import ValidateWebData
 from django import forms
 
 
@@ -18,9 +19,14 @@ class AddVacancyForm(forms.Form):
     attachment = forms.FileField(
         label="Attachment",
         allow_empty_file=False,
-        validators=[ValidateFileExtension(["pdf"]), ValidateFileSize(max_size=5_000_000)],
+        validators=[
+            ValidateWebData(FileExtensionValidator(["pdf"])),
+            ValidateWebData(FileSizeValidator(max_size=5_000_000)),
+        ],
     )
-    tags = forms.CharField(label="Tags", widget=forms.Textarea, validators=[ValidateMaxTagCount(max_count=5)])
+    tags = forms.CharField(
+        label="Tags", widget=forms.Textarea, validators=[ValidateWebData(MaxTagCountValidator(max_count=5))]
+    )
 
 
 class SearchVacancyForm(forms.Form):
@@ -40,5 +46,8 @@ class ApplyVacancyForm(forms.Form):
     cv = forms.FileField(
         label="CV",
         allow_empty_file=False,
-        validators=[ValidateFileExtension(["pdf"]), ValidateFileSize(max_size=5_000_000)],
+        validators=[
+            ValidateWebData(FileExtensionValidator(["pdf"])),
+            ValidateWebData(FileSizeValidator(max_size=5_000_000)),
+        ],
     )
