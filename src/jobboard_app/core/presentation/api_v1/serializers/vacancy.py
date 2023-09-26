@@ -11,7 +11,7 @@ class SearchVacanciesSerializer(serializers.Serializer):
     tag = serializers.CharField(required=False, default="")
 
 
-class CompanyInfoSerializer(serializers.Serializer):
+class CompanyShortInfoSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     name = serializers.CharField()
 
@@ -24,7 +24,7 @@ class LevelInfoSerializer(serializers.Serializer):
 class VacancyInfoSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     name = serializers.CharField()
-    company = CompanyInfoSerializer()
+    company = CompanyShortInfoSerializer()
     level = LevelInfoSerializer()
     expirience = serializers.CharField()
     min_salary = serializers.IntegerField()
@@ -38,3 +38,10 @@ class TagSerializer(serializers.Serializer):
 
 class VacancySerializer(VacancyInfoSerializer):
     tags = TagSerializer(many=True, read_only=True)
+
+
+class VacancyInfoPaginatedResponseSerializer(serializers.Serializer):
+    count = serializers.IntegerField()
+    next = serializers.CharField()
+    previous = serializers.CharField()
+    results = VacancyInfoSerializer(many=True)

@@ -1,5 +1,11 @@
+from .common import ErrorSerializer
 from .company import CompanyInfoSerializer, CompanySerializer, CreateCompanyResponseSerializer, CreateCompanySerializer
-from .vacancy import SearchVacanciesSerializer, VacancyInfoSerializer, VacancySerializer
+from .vacancy import (
+    SearchVacanciesSerializer,
+    VacancyInfoPaginatedResponseSerializer,
+    VacancyInfoSerializer,
+    VacancySerializer,
+)
 
 __all__ = [
     "SearchVacanciesSerializer",
@@ -9,4 +15,6 @@ __all__ = [
     "CompanySerializer",
     "CreateCompanySerializer",
     "CreateCompanyResponseSerializer",
+    "ErrorSerializer",
+    "VacancyInfoPaginatedResponseSerializer",
 ]

@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
     from core.business_logic.dto import SearchVacancyDTO, AddVacancyDTO, ApplyVacancyDTO
 
-from core.business_logic.exceptions import CompanyNotExists
+from core.business_logic.exceptions import CompanyNotExists, VacancyNotExists
 from core.business_logic.services.common import replace_file_name_to_uuid
 from core.models import Company, JobResponse, Level, Tag, Vacancy
 
@@ -85,7 +85,10 @@ def create_vacancy(data: AddVacancyDTO) -> None:
 
 
 def get_vacancy_by_id(vacancy_id: int) -> tuple[Vacancy, list[Tag]]:
-    vacancy = Vacancy.objects.select_related("level", "company").prefetch_related("tags").get(pk=vacancy_id)
+    try:
+        vacancy = Vacancy.objects.select_related("level", "company").prefetch_related("tags").get(pk=vacancy_id)
+    except Vacancy.DoesNotExist:
+        raise VacancyNotExists
     tags = vacancy.tags.all()
     logger.info("Got vacancy.", extra={"vacancy_id": vacancy.id})
     return vacancy, list(tags)

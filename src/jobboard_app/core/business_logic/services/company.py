@@ -8,6 +8,7 @@ from django.db.models import Count
 if TYPE_CHECKING:
     from core.business_logic.dto import AddCompanyDTO
 
+from core.business_logic.exceptions import CompanyNotExists
 from core.business_logic.services.common import change_file_size, replace_file_name_to_uuid
 from core.models import Company
 
@@ -28,6 +29,9 @@ def get_companies() -> list[Company]:
 
 
 def get_company_by_id(company_id: int) -> Company:
-    company: Company = Company.objects.annotate(vacancy__count=Count("vacancy__id")).get(pk=company_id)
+    try:
+        company: Company = Company.objects.annotate(vacancy__count=Count("vacancy__id")).get(pk=company_id)
+    except Company.DoesNotExist:
+        raise CompanyNotExists
     logger.info("Succefully got company.", extra={"company_id": str(company.id), "company_name": company.name})
     return company

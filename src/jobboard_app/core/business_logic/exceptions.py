@@ -12,3 +12,7 @@ class ConfirmationCodeExpired(Exception):
 
 class InvalidAuthCredentials(Exception):
     ...
+
+
+class VacancyNotExists(Exception):
+    ...
