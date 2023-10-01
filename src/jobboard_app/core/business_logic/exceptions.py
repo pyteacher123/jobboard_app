@@ -16,3 +16,7 @@ class InvalidAuthCredentials(Exception):
 
 class VacancyNotExists(Exception):
     ...
+
+
+class CompanyAlreadyExists(Exception):
+    ...

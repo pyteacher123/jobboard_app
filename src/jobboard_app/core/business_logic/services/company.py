@@ -4,11 +4,12 @@ import logging
 from typing import TYPE_CHECKING, Any
 
 from django.db.models import Count
+from django.db.utils import IntegrityError
 
 if TYPE_CHECKING:
     from core.business_logic.dto import AddCompanyDTO
 
-from core.business_logic.exceptions import CompanyNotExists
+from core.business_logic.exceptions import CompanyAlreadyExists, CompanyNotExists
 from core.business_logic.services.common import change_file_size, replace_file_name_to_uuid
 from core.models import Company
 
@@ -18,7 +19,10 @@ logger = logging.getLogger(__name__)
 def create_company(data: AddCompanyDTO) -> Any:
     data.logo = replace_file_name_to_uuid(file=data.logo)
     data.logo = change_file_size(file=data.logo)
-    company = Company.objects.create(name=data.name, employees_number=data.employees_number, logo=data.logo)
+    try:
+        company = Company.objects.create(name=data.name, employees_number=data.employees_number, logo=data.logo)
+    except IntegrityError:
+        raise CompanyAlreadyExists
     logger.info(f"Created file with filename {data.logo.name}")
     return company.id
 
