@@ -1,22 +1,11 @@
-from io import BytesIO
 from typing import Any
 
 from core.business_logic.dto import AddCompanyDTO
 from core.business_logic.exceptions import CompanyAlreadyExists, CompanyNotExists
 from core.business_logic.services import create_company, get_companies, get_company_by_id
 from core.models import Company
-from django.core.files.uploadedfile import InMemoryUploadedFile
+from core.tests.test_unit.utils import get_test_file
 from django.test import TestCase
-from PIL import Image
-
-
-def get_test_file() -> InMemoryUploadedFile:
-    output = BytesIO()
-    image = Image.new("RGB", (100, 100))
-    image.save(output, format="PNG", quality=100)
-    return InMemoryUploadedFile(
-        file=output, field_name=None, name="test.png", content_type="image/png", size=10, charset=None
-    )
 
 
 class CompanyServicesTests(TestCase):

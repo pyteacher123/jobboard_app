@@ -3,6 +3,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
+from django.conf import settings
 from django.db import transaction
 from django.db.models import QuerySet
 
@@ -12,7 +13,7 @@ if TYPE_CHECKING:
     from core.business_logic.dto import SearchVacancyDTO, AddVacancyDTO, ApplyVacancyDTO
 
 from core.business_logic.exceptions import CompanyNotExists, VacancyNotExists
-from core.business_logic.services.common import replace_file_name_to_uuid
+from core.business_logic.services.common import get_qr_code, replace_file_name_to_uuid
 from core.models import Company, JobResponse, Level, Tag, Vacancy
 
 logger = logging.getLogger(__name__)
@@ -55,8 +56,8 @@ def create_vacancy(data: AddVacancyDTO) -> None:
             tag = tag.lower()
             try:
                 tag_from_db = Tag.objects.get(name=tag)
-            except Tag.DoesNotExist as err:
-                logger.warning("Tag doesn't exists", extra={"tag": tag}, exc_info=err)
+            except Tag.DoesNotExist:
+                logger.warning("Tag doesn't exists", extra={"tag": tag})
                 tag_from_db = Tag.objects.create(name=tag)
                 logger.info("Handled error and successfully created tag in db.", extra={"tag": tag})
 
@@ -65,8 +66,8 @@ def create_vacancy(data: AddVacancyDTO) -> None:
         level = Level.objects.get(name=data.level)
         try:
             company = Company.objects.get(name=data.company_name)
-        except Company.DoesNotExist as err:
-            logger.error("Company doesn't exists.", extra={"company": data.company_name}, exc_info=err)
+        except Company.DoesNotExist:
+            logger.error("Company doesn't exists.", extra={"company": data.company_name})
             raise CompanyNotExists
 
         data.attachment = replace_file_name_to_uuid(file=data.attachment)
@@ -82,6 +83,11 @@ def create_vacancy(data: AddVacancyDTO) -> None:
         )
 
         created_vacancy.tags.set(tags_list)
+
+        data = f"{settings.SERVER_HOST}/vacancy/{created_vacancy.id}/"
+        qr_code = get_qr_code(data=data)
+        created_vacancy.qr_code = qr_code
+        created_vacancy.save()
 
 
 def get_vacancy_by_id(vacancy_id: int) -> tuple[Vacancy, list[Tag]]:

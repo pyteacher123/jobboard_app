@@ -5,11 +5,14 @@ import uuid
 from io import BytesIO
 from typing import TYPE_CHECKING
 
+import requests
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from PIL import Image
 
 if TYPE_CHECKING:
     from django.core.files import File
+
+from core.business_logic.exceptions import QRCodeServiceUnavailable
 
 
 def replace_file_name_to_uuid(file: File) -> File:
@@ -34,3 +37,19 @@ def change_file_size(file: InMemoryUploadedFile) -> InMemoryUploadedFile:
         size=sys.getsizeof(output),
         charset=file.charset,
     )
+
+
+def get_qr_code(data: str) -> InMemoryUploadedFile:
+    response = requests.get(f"https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={data}")
+    if response.status_code == 200:
+        output = BytesIO(response.content)
+        return InMemoryUploadedFile(
+            file=output,
+            field_name=None,
+            name=str(uuid.uuid4()) + ".png",
+            content_type="image/png",
+            size=sys.getsizeof(output),
+            charset=None,
+        )
+    else:
+        raise QRCodeServiceUnavailable

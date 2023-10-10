@@ -20,3 +20,7 @@ class VacancyNotExists(Exception):
 
 class CompanyAlreadyExists(Exception):
     ...
+
+
+class QRCodeServiceUnavailable(Exception):
+    ...

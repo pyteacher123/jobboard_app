@@ -12,6 +12,7 @@ class Vacancy(models.Model):
     tags = models.ManyToManyField(to="Tag", related_name="vacancies", db_table="vacancies_tags")
     name = models.CharField(max_length=100)
     attachment = models.FileField(upload_to="vacancies/attachments/", null=True)
+    qr_code = models.ImageField(upload_to="vacancies/qr/", null=True)
 
     class Meta:
         db_table = "vacancies"

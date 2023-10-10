@@ -25,6 +25,8 @@
 {% endfor %}
 </p>
 <br>
+<img src="{{ vacancy.qr_code.url }}">
+<br>
 {% if perms.core.apply_to_vacancy %}
    <a href="{% url 'apply-vacancy' vacancy.id %}">Apply</a>
 {% endif %}

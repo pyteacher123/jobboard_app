@@ -57,6 +57,6 @@ class MaxTagCountValidator:
         number_of_tags = len(value.split("\r\n"))
 
         if number_of_tags > self._max_count:
-            return {"status": False, "message": "Max number of tags is {self._max_count}"}
+            return {"status": False, "message": f"Max number of tags is {self._max_count}"}
 
         return {"status": True}
