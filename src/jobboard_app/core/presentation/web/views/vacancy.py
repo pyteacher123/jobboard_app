@@ -15,6 +15,7 @@ if TYPE_CHECKING:
 from core.business_logic.dto import AddVacancyDTO, ApplyVacancyDTO, SearchVacancyDTO
 from core.business_logic.exceptions import CompanyNotExists
 from core.business_logic.services import apply_to_vacancy, create_vacancy, get_vacancy_by_id, search_vacancies
+from core.business_logic.services.common import QRApiAdapter
 from core.presentation.common.converters import convert_data_from_form_to_dto
 from core.presentation.web.forms import AddVacancyForm, ApplyVacancyForm, SearchVacancyForm
 from core.presentation.web.pagination import CustomPagination, PageNotExists
@@ -60,7 +61,8 @@ def add_vacancy_controller(request: HttpRequest) -> HttpResponse:
         if form.is_valid():
             data = convert_data_from_form_to_dto(AddVacancyDTO, form.cleaned_data)
             try:
-                create_vacancy(data=data)
+                qr_adapter = QRApiAdapter(base_url="https://api.qrserver.com/v1/")
+                create_vacancy(data=data, qr_adapter=qr_adapter)
             except CompanyNotExists:
                 return HttpResponseBadRequest(content="Provided company doesn't exist.")
         else:

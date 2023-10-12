@@ -1,10 +1,9 @@
-from unittest.mock import MagicMock, patch
-
 import requests  # noqa
 from core.business_logic.dto import AddVacancyDTO, SearchVacancyDTO
 from core.business_logic.exceptions import CompanyNotExists
 from core.business_logic.services import create_vacancy, search_vacancies
 from core.models import Company, Level, Tag, Vacancy
+from core.tests.mocks import QRApiAdapterMock
 from core.tests.test_unit.utils import get_test_file, get_test_pdf
 from django.test import TestCase
 
@@ -42,12 +41,7 @@ class VacancyServicesTests(TestCase):
         vacancy2.tags.set([tag1, tag2])
         return super().setUp()
 
-    @patch("core.tests.test_unit.test_services.test_vacancy.requests.get")
-    def test_create_vacancy_successfully(self, mock_get: MagicMock) -> None:
-        mock_response = MagicMock()
-        mock_response.status_code = 200
-        mock_response.content = bytes()
-        mock_get.return_value = mock_response
+    def test_create_vacancy_successfully(self) -> None:
         data = AddVacancyDTO(
             name="Python Engineer",
             level="Junior",
@@ -61,7 +55,8 @@ class VacancyServicesTests(TestCase):
 
         count_before_request = Vacancy.objects.all().count()
 
-        create_vacancy(data=data)
+        qr_adapter = QRApiAdapterMock()
+        create_vacancy(data=data, qr_adapter=qr_adapter)
 
         count_after_request = Vacancy.objects.all().count()
 
@@ -92,7 +87,8 @@ class VacancyServicesTests(TestCase):
         count_before_request = Vacancy.objects.all().count()
 
         with self.assertRaises(CompanyNotExists):
-            create_vacancy(data=data)
+            qr_adapter = QRApiAdapterMock()
+            create_vacancy(data=data, qr_adapter=qr_adapter)
 
         count_after_request = Vacancy.objects.all().count()
         self.assertEqual(count_before_request, count_after_request)

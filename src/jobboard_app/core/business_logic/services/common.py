@@ -53,3 +53,23 @@ def get_qr_code(data: str) -> InMemoryUploadedFile:
         )
     else:
         raise QRCodeServiceUnavailable
+
+
+class QRApiAdapter:
+    def __init__(self, base_url: str) -> None:
+        self._base_url = base_url
+
+    def get_qr(self, data: str) -> InMemoryUploadedFile:
+        response = requests.get(f"{self._base_url}/create-qr-code/?size=150x150&data={data}")
+        if response.status_code == 200:
+            output = BytesIO(response.content)
+            return InMemoryUploadedFile(
+                file=output,
+                field_name=None,
+                name=str(uuid.uuid4()) + ".png",
+                content_type="image/png",
+                size=sys.getsizeof(output),
+                charset=None,
+            )
+        else:
+            raise QRCodeServiceUnavailable

@@ -11,9 +11,10 @@ if TYPE_CHECKING:
     from django.contrib.auth.models import AbstractBaseUser
 
     from core.business_logic.dto import SearchVacancyDTO, AddVacancyDTO, ApplyVacancyDTO
+    from core.business_logic.interfaces import QRApiAdaptarProtocol
 
 from core.business_logic.exceptions import CompanyNotExists, VacancyNotExists
-from core.business_logic.services.common import get_qr_code, replace_file_name_to_uuid
+from core.business_logic.services.common import replace_file_name_to_uuid
 from core.models import Company, JobResponse, Level, Tag, Vacancy
 
 logger = logging.getLogger(__name__)
@@ -48,7 +49,7 @@ def search_vacancies(search_filters: SearchVacancyDTO) -> QuerySet[Vacancy]:
     return vacancies
 
 
-def create_vacancy(data: AddVacancyDTO) -> None:
+def create_vacancy(data: AddVacancyDTO, qr_adapter: QRApiAdaptarProtocol) -> None:
     with transaction.atomic():
         tags: list[str] = data.tags.split("\r\n")
         tags_list: list[Tag] = []
@@ -85,7 +86,7 @@ def create_vacancy(data: AddVacancyDTO) -> None:
         created_vacancy.tags.set(tags_list)
 
         data = f"{settings.SERVER_HOST}/vacancy/{created_vacancy.id}/"
-        qr_code = get_qr_code(data=data)
+        qr_code = qr_adapter.get_qr(data=data)
         created_vacancy.qr_code = qr_code
         created_vacancy.save()
 

@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from django.contrib.auth.decorators import permission_required
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import parsers
@@ -50,8 +49,6 @@ from core.presentation.common.converters import convert_data_from_form_to_dto
 )
 @api_view(http_method_names=["GET", "POST"])
 @parser_classes([parsers.MultiPartParser])
-@permission_required(["core.add_company"])
-@permission_classes([IsAuthenticated])
 def companies_api_controller(request: Request) -> Response:
     if request.method == "GET":
         companies = get_companies()
