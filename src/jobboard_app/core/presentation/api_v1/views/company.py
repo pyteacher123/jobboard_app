@@ -5,11 +5,9 @@ from typing import TYPE_CHECKING
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import parsers
-from rest_framework.decorators import api_view, parser_classes, permission_classes, throttle_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import api_view, parser_classes
 from rest_framework.response import Response
 from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND
-from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
 
 if TYPE_CHECKING:
     from rest_framework.request import Request
@@ -76,8 +74,6 @@ def companies_api_controller(request: Request) -> Response:
     },
 )
 @api_view(http_method_names=["GET"])
-@permission_classes([IsAuthenticated])
-@throttle_classes([AnonRateThrottle, UserRateThrottle])
 def get_company_api_controller(request: Request, company_id: int) -> Response:
     try:
         company = get_company_by_id(company_id=company_id)

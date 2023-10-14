@@ -1,8 +1,11 @@
+import io
+
 import pytest
 from core.models import Company, Level, Tag, Vacancy
 from core.tests.mocks import QRApiAdapterMock
-from core.tests_pytest.utils import get_test_file, get_test_pdf
+from core.tests_pytest.utils import get_test_file, get_test_file_bytes, get_test_pdf
 from django.core.files.uploadedfile import InMemoryUploadedFile
+from rest_framework.test import APIClient
 
 
 @pytest.fixture
@@ -13,6 +16,11 @@ def pdf_for_test() -> InMemoryUploadedFile:
 @pytest.fixture
 def png_for_test() -> InMemoryUploadedFile:
     return get_test_file()
+
+
+@pytest.fixture
+def png_bytes() -> io.BytesIO:
+    return get_test_file_bytes()
 
 
 @pytest.fixture(autouse=True)
@@ -49,3 +57,9 @@ def populate_db(png_for_test: InMemoryUploadedFile, pdf_for_test: InMemoryUpload
 @pytest.fixture
 def qr_adapter_mock() -> QRApiAdapterMock:
     return QRApiAdapterMock()
+
+
+@pytest.fixture(scope="session")
+def api_client() -> APIClient:
+    client = APIClient()
+    yield client

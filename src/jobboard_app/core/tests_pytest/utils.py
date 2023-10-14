@@ -15,6 +15,13 @@ def get_test_file() -> InMemoryUploadedFile:
     )
 
 
+def get_test_file_bytes() -> BytesIO:
+    output = BytesIO()
+    image = Image.new("RGB", (100, 100))
+    image.save(output, format="PNG", quality=100)
+    return output
+
+
 def get_test_pdf() -> InMemoryUploadedFile:
     with tempfile.NamedTemporaryFile(mode="w+b", suffix=".pdf") as file:
         output = BytesIO(file.read())
